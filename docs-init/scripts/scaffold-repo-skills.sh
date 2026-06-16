@@ -34,6 +34,27 @@ install_skill docs-write  "$DOCS_INIT_ROOT/templates/docs-write"
 install_skill docs-verify "$DOCS_INIT_ROOT/templates/docs-verify"
 install_skill docs-defrag "$DOCS_INIT_ROOT/templates/docs-defrag"
 
+# 2b. Provenance: record which SSOT version was vendored here. docs-defrag reads this on its
+#     next run to decide whether the SSOT has a newer HEAD (pull-update trigger, Phase D).
+SSOT_ROOT="$(git -C "$DOCS_INIT_ROOT" rev-parse --show-toplevel 2>/dev/null || echo "")"
+if [[ -n "$SSOT_ROOT" ]]; then
+  ssot_commit="$(git -C "$SSOT_ROOT" rev-parse HEAD 2>/dev/null || echo "unknown")"
+  ssot_version="$(tr -d '[:space:]' < "$SSOT_ROOT/VERSION" 2>/dev/null || echo "0.0.0")"
+  ssot_origin="$(git -C "$SSOT_ROOT" config --get remote.origin.url 2>/dev/null || echo "(local-only)")"
+else
+  ssot_commit="unknown"
+  ssot_version="0.0.0"
+  ssot_origin="(no-ssot-git)"
+fi
+{
+  echo "# polaris-docs tooling provenance — do not edit by hand."
+  echo "# Written by scaffold-repo-skills.sh; updated by docs-defrag after a pull-update."
+  echo "ssot_commit=$ssot_commit"
+  echo "ssot_version=$ssot_version"
+  echo "ssot_origin=$ssot_origin"
+} > "$DEST_BASE/.tooling-version"
+echo "scaffold-repo-skills: stamped .tooling-version (version=$ssot_version commit=${ssot_commit:0:7})"
+
 # 3. Seed docs/ hub if absent.
 DOCS_TPL="$DOCS_INIT_ROOT/templates/docs"
 mkdir -p "$REPO_ROOT/docs"
