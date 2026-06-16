@@ -22,6 +22,14 @@ install_skill() {
   local template_dir="$2"
   local target="$DEST_BASE/$name"
   mkdir -p "$target"
+  # A canonical skill holds ONLY SKILL.md; scripts/reference live once in _shared. If this skill
+  # pre-exists from the old per-skill-duplicated layout, drop its stale scripts/reference/README.shared.
+  for stale in scripts reference README.shared.md; do
+    if [[ -e "$target/$stale" ]]; then
+      find "$target/$stale" -depth -delete 2>/dev/null || true
+      echo "scaffold: pruned stale $name/$stale (lives in _shared now)"
+    fi
+  done
   if [[ -f "$template_dir/skill.template.md" ]]; then
     cp -f "$template_dir/skill.template.md" "$target/SKILL.md"
   else
