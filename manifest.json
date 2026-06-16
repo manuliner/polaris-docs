@@ -1,0 +1,18 @@
+{
+  "$schema-note": "Declarative classification of every vendored tooling file. Read by docs-defrag (via diff-tooling.sh) to decide how to merge a newer SSOT version into a satellite. Paths are relative to a satellite's .cursor/skills/ directory. Glob '**' matches nested files.",
+  "version": 1,
+  "classes": {
+    "managed": "Always taken hard from the SSOT on update. Behavior/contract files a satellite must not fork. A local edit here is reported and overwritten.",
+    "local-overridable": "A satellite may adapt these. On update, local edits are preserved and the upstream improvement is merged in semantically; true conflicts are reported, never silently overwritten."
+  },
+  "rules": [
+    { "glob": "_shared/scripts/**", "class": "managed", "why": "Shared check/verify scripts are the tooling contract; identical across all satellites." },
+    { "glob": "_shared/README.md", "class": "managed", "why": "Boilerplate describing the asset folder; not meant to be edited per repo." },
+    { "glob": "_shared/reference/**", "class": "local-overridable", "why": "Pattern prose a repo may extend with local conventions." },
+    { "glob": ".tooling-version", "class": "managed", "why": "Provenance stamp; rewritten by docs-defrag after a successful update, never hand-edited." },
+    { "glob": "docs-write/SKILL.md", "class": "local-overridable", "why": "Workflow wording a repo may tune; merge to keep local tuning + upstream improvements." },
+    { "glob": "docs-verify/SKILL.md", "class": "local-overridable", "why": "See docs-write/SKILL.md." },
+    { "glob": "docs-defrag/SKILL.md", "class": "local-overridable", "why": "See docs-write/SKILL.md." }
+  ],
+  "default": "managed"
+}
