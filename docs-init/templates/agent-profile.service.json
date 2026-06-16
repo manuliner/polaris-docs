@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "structure": "canonical",
+  "workspaceMode": "service",
+  "role": "l1",
+  "harnessPath": "../platform-harness",
+  "hosts": ["cursor"],
+  "codemaps": ["docs/AGENTS_ARCHITECTURE.md"],
+  "documentation": {
+    "l1Paths": ["AGENTS.md", "CLAUDE.md", "docs/README.md"],
+    "l3Globs": ["docs/**/*.md"],
+    "mocPaths": ["AGENTS.md", "CLAUDE.md", "docs/README.md", "docs/AGENTS_ARCHITECTURE.md"],
+    "forbiddenGlobs": ["ARCHITECTURE.md", "DEPLOYMENT.md"]
+  }
+}

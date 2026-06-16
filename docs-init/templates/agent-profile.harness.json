@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "structure": "canonical",
+  "workspaceMode": "harness",
+  "role": "l0",
+  "hosts": ["cursor"],
+  "codemaps": ["docs/AGENTS_ARCHITECTURE.md"],
+  "documentation": {
+    "l1Paths": ["AGENTS.md", "WORKSPACE.md"],
+    "l3Globs": ["docs/**/*.md"],
+    "mocPaths": ["AGENTS.md", "WORKSPACE.md", "docs/AGENTS_ARCHITECTURE.md"],
+    "forbiddenGlobs": []
+  },
+  "autoSections": [
+    {
+      "path": "docs/AGENTS_ARCHITECTURE.md",
+      "sections": ["<!-- AUTO:event-flows -->"]
+    },
+    {
+      "path": "WORKSPACE.md",
+      "sections": ["<!-- AUTO:services -->"]
+    }
+  ]
+}
