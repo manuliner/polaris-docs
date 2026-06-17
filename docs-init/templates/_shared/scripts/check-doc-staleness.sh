@@ -1,16 +1,27 @@
 #!/usr/bin/env bash
 # check-doc-staleness.sh — READ-ONLY. Detect doc-to-code drift (self-healing loop, Phase I).
 #
-# For each leaf under docs/ that declares `sources:` + `sources_stamp:` in its frontmatter, compare
-# the git history of those source paths against the stamped commit. If a source has commits newer
-# than the stamp, the leaf is STALE: its documented code moved on. Prints one block per stale leaf:
+# Two modes:
+#   (default) HISTORY — for each leaf with `sources:` + `sources_stamp:`, count commits on those
+#             source paths since the stamp. Newer commits → STALE. Used by docs-defrag (step 6).
+#   --staged          — for a pre-commit hook: a leaf is STALE if any of its `sources:` paths is
+#             touched by the STAGED changes (`git diff --cached`). No stamp needed; the new commit
+#             does not exist yet. Used by hooks/pre-commit-staleness.
+#
+# Prints one block per stale leaf:
 #     STALE <leaf>
 #       sources: <paths>
-#       range:   <stamp>..HEAD
-#       commits: <n>
+#       range:   <stamp>..HEAD            (history mode)
+#       commits: <n>                      (history mode)
+#       staged:  <matched source paths>   (staged mode)
 # Leaves without `sources` are skipped silently (no false alarm). Exit 0 always (advisory, not a gate);
-# the count of stale leaves is printed on the last line as `stale=<n>` for the caller (docs-defrag).
+# the count of stale leaves is printed on the last line as `stale=<n>` for the caller.
 set -euo pipefail
+
+MODE="history"
+if [[ "${1:-}" == "--staged" || "${STALENESS_MODE:-}" == "staged" ]]; then
+  MODE="staged"
+fi
 
 REPO_ROOT="${REPO_ROOT:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)}"
 REPO_ROOT="$(cd "$REPO_ROOT" && pwd -P)"
@@ -26,6 +37,32 @@ if [[ ! -d "$DOCS" ]]; then
   echo "check-doc-staleness: no $DOCS/ directory. stale=0"
   exit 0
 fi
+
+# In staged mode, gather the staged paths once. A leaf is stale when one of its `sources` matches a
+# staged path (exact file, or a staged path under a `sources` directory entry).
+STAGED_PATHS=()
+if [[ "$MODE" == "staged" ]]; then
+  while IFS= read -r p; do
+    [[ -n "$p" ]] && STAGED_PATHS+=("$p")
+  done < <(git diff --cached --name-only 2>/dev/null || true)
+fi
+
+# Does any staged path match this leaf's sources? Echoes the matched source entries; empty = no match.
+staged_match() {
+  local matched=""
+  local s p
+  for s in "$@"; do
+    s="${s%/}"                                  # normalise trailing slash on dir sources
+    for p in "${STAGED_PATHS[@]:-}"; do
+      [[ -z "$p" ]] && continue
+      if [[ "$p" == "$s" || "$p" == "$s/"* ]]; then
+        matched="${matched:+$matched }$s"
+        break
+      fi
+    done
+  done
+  echo "$matched"
+}
 
 stale=0
 
@@ -61,6 +98,18 @@ while IFS= read -r leaf; do
       STAMP*)   stamp="${line#STAMP$'\t'}" ;;
     esac
   done <<< "$out"
+
+  # Staged mode: a leaf is stale if a staged path touches one of its sources. No stamp needed.
+  if [[ "$MODE" == "staged" ]]; then
+    hit="$(staged_match "${sources[@]}")"
+    if [[ -n "$hit" ]]; then
+      echo "STALE $rel"
+      echo "  sources: ${sources[*]}"
+      echo "  staged:  $hit"
+      stale=$((stale + 1))
+    fi
+    continue
+  fi
 
   if [[ -z "$stamp" ]]; then
     echo "STALE $rel"

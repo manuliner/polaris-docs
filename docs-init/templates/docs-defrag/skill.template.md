@@ -66,8 +66,11 @@ structural gate. Report what was taken-hard, merged, and any conflicts left for 
 
 ## Self-healing loop (doc-to-code drift)
 
-6. Run `_shared/scripts/check-doc-staleness.sh` (read-only). It flags every leaf whose `sources:`
-   have commits newer than its `sources_stamp` (leaves without `sources` are skipped — no false alarm).
+6. First read `.cursor/skills/.staleness-pending` if it exists: the pre-commit hook records leaves
+   there when a commit touched their `sources`. Treat those as stale up front, then also run
+   `_shared/scripts/check-doc-staleness.sh` (read-only) — it flags every leaf whose `sources:` have
+   commits newer than its `sources_stamp` (leaves without `sources` are skipped — no false alarm).
+   After proposing patches (step 7), clear the marker.
 7. For each **stale** leaf, produce an **auto-patch PROPOSAL, never an auto-commit**:
    - Gather the code diff of the leaf's `sources` over `sources_stamp..HEAD`.
    - Invoke the `docs-write` **update mode** with that diff as context to draft the doc update.

@@ -82,3 +82,55 @@ while IFS= read -r line; do
   [[ "$line" =~ ^([A-Z_]+)=(.*)$ ]] && export "${BASH_REMATCH[1]}=${BASH_REMATCH[2]}"
 done < <(bash "$SCRIPT_DIR/detect-harness.sh" "$REPO_ROOT")
 echo "scaffold-repo-skills: workspace MODE=$MODE harness=${HARNESS_REL:-none} listed=${LISTED:-n/a}"
+
+# 4. Install the pre-commit staleness hook (always, only in git repos). It WARNS when a commit touches
+#    code a doc leaf documents; it never blocks. We insert a marker-bounded block into the repo's
+#    native .git/hooks/pre-commit instead of setting core.hooksPath, so it coexists with any existing
+#    hook manager (husky/lefthook/etc.). Idempotent: the block is added at most once.
+if git -C "$REPO_ROOT" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  # The vendored hook script must be executable (it has no .sh suffix, so generic chmod passes miss it).
+  chmod +x "$DEST_BASE/_shared/scripts/hooks/pre-commit-staleness" 2>/dev/null || true
+  HOOK_PATH="$REPO_ROOT/$(git -C "$REPO_ROOT" rev-parse --git-path hooks/pre-commit)"
+  MARK_BEGIN="# >>> polaris-docs staleness (managed) >>>"
+  MARK_END="# <<< polaris-docs staleness <<<"
+  HOOK_CALL='"$(git rev-parse --show-toplevel)/.cursor/skills/_shared/scripts/hooks/pre-commit-staleness" || true'
+
+  mkdir -p "$(dirname "$HOOK_PATH")"
+  if [[ ! -f "$HOOK_PATH" ]]; then
+    {
+      echo "#!/usr/bin/env bash"
+      echo "$MARK_BEGIN"
+      echo "$HOOK_CALL"
+      echo "$MARK_END"
+    } > "$HOOK_PATH"
+    chmod +x "$HOOK_PATH"
+    echo "scaffold-repo-skills: created .git/hooks/pre-commit with staleness hook"
+  elif ! grep -qF "$MARK_BEGIN" "$HOOK_PATH"; then
+    {
+      echo ""
+      echo "$MARK_BEGIN"
+      echo "$HOOK_CALL"
+      echo "$MARK_END"
+    } >> "$HOOK_PATH"
+    chmod +x "$HOOK_PATH"
+    echo "scaffold-repo-skills: appended staleness hook to existing .git/hooks/pre-commit"
+  else
+    echo "scaffold-repo-skills: staleness hook already present in .git/hooks/pre-commit"
+  fi
+
+  # If the repo routes hooks elsewhere, our insert into .git/hooks/ may not run. Warn so the user can
+  # wire the call into their active hooks path manually.
+  HP="$(git -C "$REPO_ROOT" config --get core.hooksPath || true)"
+  if [[ -n "$HP" ]]; then
+    echo "scaffold-repo-skills: NOTE core.hooksPath='$HP' is set — the native .git/hooks/pre-commit"
+    echo "  may be bypassed. Add this line to your active pre-commit hook to keep the warning:"
+    echo "    $HOOK_CALL"
+  fi
+
+  # Keep the marker file out of version control (repo-local agent signal, not committed).
+  EXCL="$REPO_ROOT/$(git -C "$REPO_ROOT" rev-parse --git-path info/exclude)"
+  mkdir -p "$(dirname "$EXCL")"
+  if [[ ! -f "$EXCL" ]] || ! grep -qF '.cursor/skills/.staleness-pending' "$EXCL"; then
+    echo '.cursor/skills/.staleness-pending' >> "$EXCL"
+  fi
+fi
