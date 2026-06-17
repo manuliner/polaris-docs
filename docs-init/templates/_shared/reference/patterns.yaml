@@ -1,0 +1,72 @@
+# patterns.yaml — the declarative SSOT for doc patterns. Prose lives in the referenced reference/
+# files; this file makes the machine-checkable parts enforceable. Read by verify-patterns.sh.
+# Keep this FLAT (no deep nesting) so a grep/awk reader needs no heavyweight YAML parser.
+#
+# Each rule:
+#   id          stable identifier
+#   ref         which reference/*.md documents the rule in prose
+#   applies-to  glob (relative to repo root) the rule scopes to
+#   check       machine check kind: line-count | frontmatter-required | heading-depth | enum | llm
+#   <params>    check-specific keys (see below)
+#
+# check kinds and their params:
+#   line-count           max: <int>                      fail if a matching file exceeds max lines
+#   frontmatter-required fields: [a, b]                  fail if a matching file lacks any field in its YAML frontmatter
+#   heading-depth        max: <int>                      fail if a matching file has a heading deeper than max (## = 2)
+#   enum                 values: [..]  target: <name>    self-consistency: the named set must equal `values` (checked by self-check, Phase G)
+#   llm                  (no machine params)             soft check — judged by the defrag skill, never a hard exit-1 gate
+
+version: 1
+
+rules:
+  - id: hub-line-count
+    ref: token-efficiency.md
+    applies-to: "docs/README.md"
+    check: line-count
+    max: 40
+
+  - id: leaf-line-count
+    ref: agent-doc-layout.md
+    applies-to: "docs/**/*.md"
+    exclude: "docs/README.md"
+    check: line-count
+    max: 500
+
+  - id: skill-frontmatter
+    ref: doc-type-selector.md
+    applies-to: ".cursor/skills/*/SKILL.md"
+    check: frontmatter-required
+    fields: [name, description]
+
+  - id: leaf-frontmatter
+    ref: agent-doc-layout.md
+    applies-to: "docs/**/*.md"
+    exclude: "docs/README.md"
+    check: frontmatter-required
+    fields: [audience, category, last_verified]
+
+  - id: hub-heading-depth
+    ref: agent-doc-layout.md
+    applies-to: "docs/README.md"
+    check: heading-depth
+    max: 2
+
+  - id: leaf-heading-depth
+    ref: agent-doc-layout.md
+    applies-to: "docs/**/*.md"
+    exclude: "docs/README.md"
+    check: heading-depth
+    max: 3
+
+  - id: canonical-skills
+    ref: doc-type-selector.md
+    applies-to: ".cursor/skills/"
+    check: enum
+    target: skills-dirs
+    values: [docs-write, docs-verify, docs-defrag]
+
+  - id: one-concept-per-leaf
+    ref: agent-doc-layout.md
+    applies-to: "docs/**/*.md"
+    exclude: "docs/README.md"
+    check: llm

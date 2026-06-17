@@ -63,8 +63,29 @@ for p in sys.argv[1:]:
 ' "$@"
 }
 
-# Three canonical skills + the _shared asset folder (which has no SKILL.md and is not a skill).
-CANON_SKILLS=(docs-write docs-verify docs-defrag)
+# Canonical skill set: read from patterns.yaml (rule canonical-skills) so there is ONE source.
+# Falls back to the built-in list if the registry is unavailable.
+SCRIPT_DIR_VD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+PATTERNS_YAML="${PATTERNS_FILE:-$SCRIPT_DIR_VD/../reference/patterns.yaml}"
+CANON_SKILLS=()
+if [[ -f "$PATTERNS_YAML" ]] && command -v python3 >/dev/null 2>&1; then
+  while IFS= read -r s; do [[ -n "$s" ]] && CANON_SKILLS+=("$s"); done < <(
+    PATTERNS_YAML="$PATTERNS_YAML" python3 - <<'PY'
+import os, re
+txt = open(os.environ["PATTERNS_YAML"]).read()
+# find the canonical-skills rule block, read its `values: [a, b, c]`
+m = re.search(r"id:\s*canonical-skills.*?values:\s*\[([^\]]*)\]", txt, re.S)
+if m:
+    for v in m.group(1).split(","):
+        v = v.strip()
+        if v: print(v)
+PY
+  )
+fi
+if [[ ${#CANON_SKILLS[@]} -eq 0 ]]; then
+  CANON_SKILLS=(docs-write docs-verify docs-defrag)   # fallback if registry missing
+fi
+# Forbidden = the historic names that must never reappear as selectable skills.
 FORBIDDEN_NAMES=(hybrid docs-update docs-concepts docs-shared docs-commit docs-pr-check docs-writer docs-sync)
 
 echo "verify-docs: repo=$REPO_ROOT"
@@ -164,6 +185,16 @@ for s in "${CANON_SKILLS[@]}"; do
     warn "Claude symlink missing (run link-claude-bridge.sh): $link"
   fi
 done
+
+# Pattern gate: run the declarative machine checks from patterns.yaml as an additional layer.
+PATTERNS_SH="$SCRIPT_DIR_VD/verify-patterns.sh"
+if [[ -x "$PATTERNS_SH" ]]; then
+  if ! REPO_ROOT="$REPO_ROOT" PATTERNS_FILE="$PATTERNS_YAML" bash "$PATTERNS_SH"; then
+    err "pattern checks failed (see verify-patterns output above)"
+  fi
+else
+  warn "verify-patterns.sh not found/executable at $PATTERNS_SH (skipping pattern gate)"
+fi
 
 if [[ $ERRORS -gt 0 ]]; then
   echo "verify-docs: FAILED ($ERRORS error(s))"
