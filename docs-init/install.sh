@@ -58,5 +58,14 @@ find "$DOCS_INIT/scripts" -name '*.sh' -exec chmod +x {} + 2>/dev/null || true
 find "$DOCS_INIT/templates" -name '*.sh' -exec chmod +x {} + 2>/dev/null || true
 chmod +x "$DOCS_INIT/install.sh" 2>/dev/null || true
 
+# 4. Arm the SSOT dogfooding pre-commit hook (Phase G). core.hooksPath is versionable and survives
+#    fresh clones, unlike copying into .git/hooks. Only when this is the SSOT repo (has self-check.sh).
+SSOT_TOP="$(git -C "$DOCS_INIT" rev-parse --show-toplevel 2>/dev/null || echo "")"
+if [[ -n "$SSOT_TOP" && -f "$SSOT_TOP/scripts/self-check.sh" ]]; then
+  chmod +x "$SSOT_TOP/scripts/self-check.sh" "$SSOT_TOP/scripts/hooks/pre-commit" 2>/dev/null || true
+  git -C "$SSOT_TOP" config core.hooksPath scripts/hooks
+  echo "install: armed pre-commit hook (core.hooksPath=scripts/hooks)"
+fi
+
 echo "Done. docs-init symlinked from $DOCS_INIT."
 echo "Next: scaffold a repo with scripts/scaffold-repo-skills.sh <repo-root> (vendors the 3 skills + _shared)."

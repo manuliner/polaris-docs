@@ -1,0 +1,42 @@
+# patterns.ssot.yaml — pattern rules scoped to the SSOT repo's OWN files (dogfooding, Phase G).
+# The SSOT is not satellite-shaped: it has no docs/** or .cursor/skills/**. Its checkable files are
+# the orchestrator SKILL.md, the vendored skill.template.md sources, and reference prose. This file
+# applies the SAME check engine (verify-patterns.sh) to those, so the tooling obeys its own rules.
+version: 1
+
+rules:
+  - id: ssot-orchestrator-frontmatter
+    ref: doc-type-selector.md
+    applies-to: "docs-init/SKILL.md"
+    check: frontmatter-required
+    fields: [name, description]
+
+  - id: ssot-skill-template-frontmatter
+    ref: doc-type-selector.md
+    applies-to: "docs-init/templates/*/skill.template.md"
+    check: frontmatter-required
+    fields: [name, description]
+
+  - id: ssot-skill-line-count
+    ref: token-efficiency.md
+    applies-to: "docs-init/templates/*/skill.template.md"
+    check: line-count
+    max: 120
+
+  - id: ssot-orchestrator-line-count
+    ref: token-efficiency.md
+    applies-to: "docs-init/SKILL.md"
+    check: line-count
+    max: 120
+
+  - id: ssot-reference-line-count
+    ref: token-efficiency.md
+    applies-to: "docs-init/reference/*.md"
+    check: line-count
+    max: 200
+
+  - id: ssot-shared-reference-line-count
+    ref: token-efficiency.md
+    applies-to: "docs-init/templates/_shared/reference/*.md"
+    check: line-count
+    max: 200

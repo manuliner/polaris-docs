@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# pre-commit hook for the SSOT repo. Blocks any commit that violates the tooling's own rules or
+# whose registries have drifted from reality, so no rule-breaking version can reach origin/HEAD and
+# distribute to satellites. Armed via `git config core.hooksPath scripts/hooks` (see install.sh).
+set -euo pipefail
+ROOT="$(git rev-parse --show-toplevel)"
+if ! bash "$ROOT/scripts/self-check.sh"; then
+  echo "pre-commit: self-check failed — commit blocked. Fix the errors above or use --no-verify to override." >&2
+  exit 1
+fi
