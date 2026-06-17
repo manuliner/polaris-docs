@@ -29,7 +29,7 @@ scripts/check-auto-sections.sh     # auto-section markers from profile
 
 ## Agent doc layout (summary)
 
-- **Entry:** `AGENTS.md`, `CLAUDE.md` · **Hub:** `docs/README.md` · **Leaves:** `docs/**/*.md` (one SSOT per topic)
+- **Entry:** `AGENTS.md`, `CLAUDE.md` · **Hub:** `docs/_index.md` · **Leaves:** `docs/**/*.md` (one SSOT per topic)
 - **Forbidden at repo root:** `ARCHITECTURE.md`, `DEPLOYMENT.md` → use `docs/AGENTS_ARCHITECTURE.md`, `docs/DEPLOYMENT.md`
 
 See `reference/agent-doc-layout.md`.

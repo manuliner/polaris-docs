@@ -21,14 +21,14 @@ version: 1
 rules:
   - id: hub-line-count
     ref: token-efficiency.md
-    applies-to: "docs/README.md"
+    applies-to: "docs/_index.md"
     check: line-count
     max: 40
 
   - id: leaf-line-count
     ref: agent-doc-layout.md
     applies-to: "docs/**/*.md"
-    exclude: "docs/README.md"
+    exclude: "docs/_index.md"
     check: line-count
     max: 500
 
@@ -41,20 +41,20 @@ rules:
   - id: leaf-frontmatter
     ref: agent-doc-layout.md
     applies-to: "docs/**/*.md"
-    exclude: "docs/README.md"
+    exclude: "docs/_index.md"
     check: frontmatter-required
     fields: [audience, category, last_verified]
 
   - id: hub-heading-depth
     ref: agent-doc-layout.md
-    applies-to: "docs/README.md"
+    applies-to: "docs/_index.md"
     check: heading-depth
     max: 2
 
   - id: leaf-heading-depth
     ref: agent-doc-layout.md
     applies-to: "docs/**/*.md"
-    exclude: "docs/README.md"
+    exclude: "docs/_index.md"
     check: heading-depth
     max: 3
 
@@ -68,7 +68,7 @@ rules:
   - id: one-concept-per-leaf
     ref: agent-doc-layout.md
     applies-to: "docs/**/*.md"
-    exclude: "docs/README.md"
+    exclude: "docs/_index.md"
     check: llm
 
 # Optional frontmatter for the self-healing drift loop (Phase I). NOT required — a leaf without

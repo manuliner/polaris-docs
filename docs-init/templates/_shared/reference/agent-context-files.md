@@ -10,7 +10,7 @@ Align coding agents on **one** profile, **five** skills, and **one doc tree** un
 | ---- | ---- |
 | `AGENTS.md` | L1 entry (commands, invariants, doc map) |
 | `CLAUDE.md` | `@AGENTS.md` pointer (+ harness section when L1) |
-| `docs/README.md` | L1 hub (links only) |
+| `docs/_index.md` | L1 hub (links only) |
 | `docs/AGENTS_*.md` | L3 leaves (architecture, server, app codemaps) |
 | `.cursor/agent-profile.json` | `documentation.*` paths for verify scripts |
 | `.cursor/skills/*` | Canonical five skills only |

@@ -58,7 +58,7 @@ def parse_rules(path):
     return rules
 
 def scope_of(applies):
-    if applies.endswith("README.md"): return "hub"
+    if applies.endswith("_index.md"): return "hub"
     if "SKILL.md" in applies: return "skill"
     if applies.startswith("docs/"): return "leaf"
     return "other"

@@ -63,12 +63,13 @@ fi
 } > "$DEST_BASE/.tooling-version"
 echo "scaffold-repo-skills: stamped .tooling-version (version=$ssot_version commit=${ssot_commit:0:7})"
 
-# 3. Seed docs/ hub if absent.
+# 3. Seed docs/ hub if absent. The hub is docs/_index.md (the underscore marks it a structure file,
+#    not the human-facing root README — they must not be conflated).
 DOCS_TPL="$DOCS_INIT_ROOT/templates/docs"
 mkdir -p "$REPO_ROOT/docs"
-if [[ -f "$DOCS_TPL/README.template.md" && ! -f "$REPO_ROOT/docs/README.md" ]]; then
-  cp -f "$DOCS_TPL/README.template.md" "$REPO_ROOT/docs/README.md"
-  echo "scaffold-repo-skills: seeded $REPO_ROOT/docs/README.md"
+if [[ -f "$DOCS_TPL/_index.template.md" && ! -f "$REPO_ROOT/docs/_index.md" ]]; then
+  cp -f "$DOCS_TPL/_index.template.md" "$REPO_ROOT/docs/_index.md"
+  echo "scaffold-repo-skills: seeded $REPO_ROOT/docs/_index.md"
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"

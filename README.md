@@ -19,7 +19,7 @@ docs-init/           # the orchestrator skill + installer
     docs-write/      #   adds    — new leaves, ADRs, runbooks
     docs-verify/     #   checks  — structural + MOC gate (--scope=staged|branch)
     docs-defrag/     #   removes/merges — consolidate, archive, drift audit
-    docs/            #   docs/README.md hub template
+    docs/            #   docs/_index.md hub template
 ```
 
 ## Canonical skills (three + asset folder)

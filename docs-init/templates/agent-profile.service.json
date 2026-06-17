@@ -7,9 +7,9 @@
   "hosts": ["cursor"],
   "codemaps": ["docs/AGENTS_ARCHITECTURE.md"],
   "documentation": {
-    "l1Paths": ["AGENTS.md", "CLAUDE.md", "docs/README.md"],
+    "l1Paths": ["AGENTS.md", "CLAUDE.md", "docs/_index.md"],
     "l3Globs": ["docs/**/*.md"],
-    "mocPaths": ["AGENTS.md", "CLAUDE.md", "docs/README.md", "docs/AGENTS_ARCHITECTURE.md"],
+    "mocPaths": ["AGENTS.md", "CLAUDE.md", "docs/_index.md", "docs/AGENTS_ARCHITECTURE.md"],
     "forbiddenGlobs": ["ARCHITECTURE.md", "DEPLOYMENT.md"]
   }
 }

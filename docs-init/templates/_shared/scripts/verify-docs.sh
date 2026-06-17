@@ -112,7 +112,7 @@ if [[ -f "$PROFILE" ]] && command -v jq >/dev/null 2>&1; then
   fi
 fi
 if [[ ${#L1_PATHS[@]} -eq 0 ]]; then
-  L1_PATHS=(AGENTS.md CLAUDE.md docs/README.md)
+  L1_PATHS=(AGENTS.md CLAUDE.md docs/_index.md)
 fi
 for p in "${L1_PATHS[@]}"; do
   [[ -z "$p" ]] && continue

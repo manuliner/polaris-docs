@@ -86,6 +86,6 @@ while IFS= read -r leaf; do
     echo "  commits: $n"
     stale=$((stale + 1))
   fi
-done < <(find "$DOCS" -name '*.md' -not -name 'README.md' -not -path '*/.git/*' | sort)
+done < <(find "$DOCS" -name '*.md' -not -name '_index.md' -not -path '*/.git/*' | sort)
 
 echo "check-doc-staleness: stale=$stale"

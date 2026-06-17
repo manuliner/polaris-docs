@@ -12,7 +12,7 @@ The **adds** skill: creates new documentation. It does not consolidate or delete
 
 1. Read `_shared/reference/agent-doc-layout.md` — leaves under `docs/`, hubs link only.
 2. Pick doc type via `_shared/reference/doc-type-selector.md`.
-3. Create a leaf under `docs/`; add one line + link to `docs/README.md` (or layer codemap).
+3. Create a leaf under `docs/`; add one line + link to `docs/_index.md` (or layer codemap).
    For **code-adjacent leaves** (architecture, codemaps, runbooks tied to specific files) you MUST set
    `sources: [<repo-relative paths>]` and `sources_stamp: <current commit>` (`git rev-parse HEAD`) so
    the self-healing drift check (`docs-defrag` step 6) can track them. Purely conceptual leaves may

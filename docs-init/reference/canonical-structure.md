@@ -6,7 +6,7 @@
 AGENTS.md              # L1 agent entry (commands, invariants, doc map)
 CLAUDE.md              # @AGENTS.md pointer (+ harness section when L1)
 docs/
-  README.md            # L1 hub (links only)
+  _index.md            # L1 hub (links only; underscore = structure file, not the human root README)
   AGENTS_ARCHITECTURE.md
   AGENTS_SERVER.md     # optional; create via docs-write when needed
   AGENTS_APP.md        # optional
@@ -32,7 +32,7 @@ web/**/README.md       # optional one-liner per folder; link up to docs/AGENTS_*
 
 ## L1 / L3 contract (verification)
 
-- **L1**: `AGENTS.md`, `CLAUDE.md`, `docs/README.md` (MOC hubs).
+- **L1**: `AGENTS.md`, `CLAUDE.md`, `docs/_index.md` (MOC hubs).
 - **L3**: `docs/**/*.md` leaves linked from hubs.
 
 `verify-docs.sh` enforces profile paths, forbidden root doc regressions, and skill integrity.

@@ -14,7 +14,7 @@
 | ---- | ---- |
 | `AGENTS.md` | L1 entry: commands, stack, invariants, doc map |
 | `CLAUDE.md` | Pointer to `AGENTS.md` (+ harness workspace section when L1) |
-| `docs/README.md` | L1 hub: links only |
+| `docs/_index.md` | L1 hub: links only |
 | `docs/AGENTS_ARCHITECTURE.md` | System diagram + directory tree + task router |
 | `docs/AGENTS_SERVER.md` | Server/API/middleware/import path SSOT |
 | `docs/AGENTS_APP.md` | UI/composable path SSOT |
@@ -35,6 +35,6 @@ Profile `documentation.forbiddenGlobs` should include `ARCHITECTURE.md` and `DEP
 ## Layering (load order)
 
 1. `AGENTS.md` / `CLAUDE.md`
-2. `docs/README.md`
+2. `docs/_index.md`
 3. One branch: `docs/AGENTS_ARCHITECTURE.md` → `AGENTS_SERVER` / `AGENTS_APP` as needed
 4. `web/**/README.md` only when working inside that folder
