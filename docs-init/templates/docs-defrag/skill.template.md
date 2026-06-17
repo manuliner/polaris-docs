@@ -58,16 +58,36 @@ structural gate. Report what was taken-hard, merged, and any conflicts left for 
 4. Flag root `ARCHITECTURE.md` / `DEPLOYMENT.md` or duplicated codemap prose as SSOT violations.
    (Detection is owned by `docs-verify`/`verify-docs.sh`; defrag acts on the findings.)
 
+## Pattern audit
+
+5. Run `_shared/scripts/verify-patterns.sh` (hard machine checks: line-count, frontmatter,
+   heading-depth). For the soft `one-concept` rule, judge each leaf yourself: a leaf covering several
+   independent topics is a split candidate — propose splitting it via `docs-write`.
+
+## Self-healing loop (doc-to-code drift)
+
+6. Run `_shared/scripts/check-doc-staleness.sh` (read-only). It flags every leaf whose `sources:`
+   have commits newer than its `sources_stamp` (leaves without `sources` are skipped — no false alarm).
+7. For each **stale** leaf, produce an **auto-patch PROPOSAL, never an auto-commit**:
+   - Gather the code diff of the leaf's `sources` over `sources_stamp..HEAD`.
+   - Invoke the `docs-write` **update mode** with that diff as context to draft the doc update.
+   - Surface it as a preview / branch / PR comment for a human to review. Do not write to the leaf
+     silently.
+8. **After a human accepts** a patch: run `docs-verify`, then set the leaf's `sources_stamp` to the
+   current code commit (`git rev-parse HEAD`). That closes the loop — the leaf is verified-against-code
+   again and will not re-flag until the sources move on.
+
+> Not available in non-git repos (e.g. `platform-harness`): staleness needs `git log` over `sources`.
+> There, only the structural + pattern checks run.
+
 ## Scripts
 
 - `_shared/scripts/diff-tooling.sh` (step 0, read-only 3-way classify vs. SSOT)
 - `_shared/scripts/check-dead-paths.sh`
 - `_shared/scripts/verify-docs-principles.sh`
-- `_shared/scripts/verify-docs.sh` (step 0e re-verify)
-
-> Phases F/I still add to this skill: pattern audit (`verify-patterns.sh`) and the doc-to-code drift
-> loop (`check-doc-staleness.sh` → docs-write update proposal). The tooling self-update (step 0) is
-> already in place.
+- `_shared/scripts/verify-patterns.sh` (step 5 pattern audit)
+- `_shared/scripts/check-doc-staleness.sh` (step 6 drift detection)
+- `_shared/scripts/verify-docs.sh` (step 0e / step 8 re-verify)
 
 ## Canonical set
 

@@ -13,16 +13,20 @@ The **adds** skill: creates new documentation. It does not consolidate or delete
 1. Read `_shared/reference/agent-doc-layout.md` — leaves under `docs/`, hubs link only.
 2. Pick doc type via `_shared/reference/doc-type-selector.md`.
 3. Create a leaf under `docs/`; add one line + link to `docs/README.md` (or layer codemap).
-   For code-adjacent leaves (architecture, codemaps) set `sources:` front-matter so the
-   self-healing drift check (`docs-defrag`) can track them.
+   For **code-adjacent leaves** (architecture, codemaps, runbooks tied to specific files) you MUST set
+   `sources: [<repo-relative paths>]` and `sources_stamp: <current commit>` (`git rev-parse HEAD`) so
+   the self-healing drift check (`docs-defrag` step 6) can track them. Purely conceptual leaves may
+   omit both.
 4. Follow the patterns in `_shared/reference/patterns.yaml` (line-count, frontmatter, heading depth),
    then run `_shared/scripts/verify-patterns.sh` and `_shared/scripts/verify-docs.sh`
    (+ `check-auto-sections.sh` if the profile defines `autoSections`).
 
 ## Update mode (driven by docs-defrag)
 
-When `docs-defrag` finds a stale leaf, it invokes docs-write in **update mode** with the code diff
-of the leaf's `sources` as context, producing a patch *proposal* (never an auto-commit).
+When `docs-defrag` finds a stale leaf, it invokes docs-write in **update mode** with the code diff of
+the leaf's `sources` over `sources_stamp..HEAD` as context. Produce a patch *proposal* (preview /
+branch / PR comment) — **never an auto-commit**. After a human accepts it, re-run `docs-verify` and set
+`sources_stamp` to the current commit, closing the loop.
 
 ## Canonical set
 

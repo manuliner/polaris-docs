@@ -70,3 +70,13 @@ rules:
     applies-to: "docs/**/*.md"
     exclude: "docs/README.md"
     check: llm
+
+# Optional frontmatter for the self-healing drift loop (Phase I). NOT required — a leaf without
+# `sources` is simply invisible to the staleness check (no false alarm). Code-adjacent leaves
+# (architecture, codemaps) SHOULD set them; purely conceptual leaves may omit them.
+#   sources: [src/foo.ts, src/bar/]   files/dirs this leaf documents (repo-relative)
+#   sources_stamp: <commit>           the code commit this leaf was last verified against
+# check-doc-staleness.sh flags a leaf as stale when its sources have commits newer than sources_stamp.
+optional-frontmatter:
+  - sources
+  - sources_stamp
