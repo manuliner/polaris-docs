@@ -43,7 +43,9 @@ docs-init/scripts/scaffold-repo-skills.sh <repo>  # vendor the skills into a pro
 
 Run `docs-defrag` in a repo. Step 0 compares the SSOT `HEAD` to the repo's `.tooling-version`, and on a
 newer commit does a 3-way merge driven by `manifest.json`: `managed` files are taken from upstream,
-`local-overridable` files are merged so **local edits survive**. Only that repo changes.
+`local-overridable` files are merged so **local edits survive**. Then **step 0f migrates the docs
+themselves** to the new spec (`diff-spec.sh`) — backfilling a newly required field, seeding a new
+reserved file — as a proposal, never an auto-commit. Only that repo changes.
 
 ## Doc-to-code drift
 
@@ -54,5 +56,7 @@ update before the commit (the hook can only warn, since a git hook cannot call a
 
 ## Rules
 
-Conventions are enforced from `patterns.yaml`: hub ≤ 40 lines, leaf ≤ 500, required frontmatter,
-exactly the four canonical skills. One soft rule (one concept per leaf) is a judgment call, not a gate.
+Conventions are enforced from `patterns.yaml`: hub ≤ 40 lines, leaf ≤ 500, required leaf frontmatter
+(`audience`, `category`, `last_verified`, `load-when` — the triage field), a `docs/_router.md` for
+task→file routing (RKF), exactly the four canonical skills. One soft rule (one concept per leaf) is a
+judgment call, not a gate.
