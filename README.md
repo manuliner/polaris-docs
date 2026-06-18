@@ -152,9 +152,18 @@ only that repo is touched. The merge is context-sensitive, so local adaptations 
    │                                                            (local edit preserved)
    │                  any                + local-only        ─▶ leave untouched
    │
-   └─ Step 0e ─ re-stamp .tooling-version ──▶ verify-docs.sh
+   ├─ Step 0e ─ re-stamp .tooling-version ──▶ verify-docs.sh
+   │
+   └─ Step 0f ─ diff-spec.sh (read-only) ──▶ migrate docs/ to the new spec
+                   backfill new required fields · seed new reserved files ·
+                   adjust to changed rules — PROPOSAL, never auto-commit
                    only THIS repo changes; others wait for their own defrag
 ```
+
+Steps 0a-0e migrate the **tooling**; step 0f migrates the **docs themselves** to match the new spec
+(e.g. a newly required frontmatter field, or a new reserved file like `docs/_router.md`). Local edits
+are preserved; the result is a proposal you review. This is the schema-drift counterpart to the
+code-drift self-healing loop.
 
 The mechanism, run as **step 0** of every `docs-defrag`:
 
@@ -180,6 +189,12 @@ The mechanism, run as **step 0** of every `docs-defrag`:
 4. **Re-stamp and verify.** Update `.tooling-version` to the new commit, run `verify-docs.sh` to confirm
    nothing structural broke, and report what was taken hard, what was merged, and any conflict left for
    you to resolve.
+5. **Migrate the docs to the new spec** (`diff-spec.sh`, read-only). Steps 1-4 update the *tooling*; this
+   step brings the *existing leaves* into line with what the new spec demands — backfilling a newly
+   required field, seeding a new reserved file, or adjusting to a changed rule. The old `ssot_commit`
+   captured in step 1 is passed as the diff base (step 4 already re-stamped it). Local edits are
+   preserved and the change is surfaced as a **proposal, never an auto-commit**. Method:
+   `_shared/reference/spec-migration.md`.
 
 ---
 

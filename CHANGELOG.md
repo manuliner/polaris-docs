@@ -1,5 +1,22 @@
 # Changelog
 
+## 1.4.0
+
+Agentic **doc migration** in `docs-defrag` (step 0f) — closes the gap where a tooling update changed
+the *rules* but left existing `docs/` leaves non-conforming.
+
+- **New `docs-defrag` step 0f** — after the tooling merge and before the pattern audit, the satellite's
+  leaves are migrated to match the new spec (backfill newly required fields, seed new reserved files,
+  adjust to changed rules), preserving local edits. Always a **proposal, never an auto-commit** —
+  the counterpart to the code-drift loop (steps 6-8).
+- **New read-only helper `diff-spec.sh`** — surfaces the spec delta (`patterns.yaml` rules, reserved
+  templates, layout prose) between the vendored base and the SSOT HEAD, with coarse `TAG` hints the
+  agent interprets.
+- **New reference `spec-migration.md`** — the change→action method for deriving doc changes from a
+  spec delta.
+- **BASE-capture fix** — step 0a now captures the old `ssot_commit` before 0e re-stamps it, and passes
+  it to `diff-spec.sh` as `BASE_COMMIT`, so the delta is not empty.
+
 ## 1.3.0
 
 Triage + routing, aligned with the [Routed Knowledge Format](https://gitlab.invers.com/Marko.Eisner/routed-knowledge-format)

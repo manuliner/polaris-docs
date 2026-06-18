@@ -18,7 +18,8 @@ pushed). All steps below are read-only until the explicit merge in 0d.
 - Resolve the SSOT repo: `realpath ~/.claude/skills/docs-init` → its git toplevel.
 - If a remote exists: `git -C <ssot> fetch --quiet` then read `git -C <ssot> rev-parse origin/HEAD`.
   No remote (origin = `(local-only)` in `.tooling-version`): fall back to local `HEAD`.
-- Read `ssot_commit` from `<repo>/.cursor/skills/.tooling-version`.
+- Read `ssot_commit` from `<repo>/.cursor/skills/.tooling-version`. **Capture this OLD commit now** —
+  0e re-stamps the file, so step 0f needs the pre-update value passed as `BASE_COMMIT`.
 - **Equal → no update.** Skip to the doc workflow (step 1). Report "tooling up to date".
 
 **0b. Survey the delta (read-only).** Run the diff helper; it classifies every vendored file:
@@ -47,6 +48,21 @@ The SSOT-path for a vendored file: `_shared/*` ← `docs-init/templates/_shared/
 (keep the file's format), then run `_shared/scripts/verify-docs.sh` so the update did not break the
 structural gate. Report what was taken-hard, merged, and any conflicts left for the human.
 
+**0f. Migrate `docs/` to the new spec (PROPOSAL, never auto-commit).** The merge above updated the
+*tooling*; now bring the *existing leaves* into line with the new spec — this is schema/structure
+drift, the counterpart to the code-drift loop (steps 6-8). Run before step 5 so the pattern audit
+then passes instead of failing.
+```
+SSOT_ROOT=<ssot> BASE_COMMIT=<OLD commit from 0a> .cursor/skills/_shared/scripts/diff-spec.sh
+```
+It prints the spec delta (changed `patterns.yaml` rules, new reserved files, layout changes) with
+coarse `TAG` hints. Empty delta → skip. Otherwise derive what each change demands of the leaves
+(added required field → backfill it with a value proposed from `description`/`category`, flagged
+`review needed`; new reserved file like `docs/_router.md` → seed from template if absent; removed/
+renamed rule → adjust, never delete a relied-on leaf without confirming). Preserve local edits; report
+genuine conflicts. Full method + the change→action table: `_shared/reference/spec-migration.md`.
+Surface as preview/branch/PR; after accept, re-run `verify-patterns.sh` + `verify-docs.sh`. Idempotent.
+
 > Only this satellite is updated; other repos stay put until their own defrag runs.
 
 ## Workflow
@@ -65,6 +81,9 @@ structural gate. Report what was taken-hard, merged, and any conflicts left for 
    independent topics is a split candidate — propose splitting it via `docs-write`.
 
 ## Self-healing loop (doc-to-code drift)
+
+> Two distinct loops: **step 0f** = spec/schema drift (docs vs. tooling spec); **steps 6-8** below =
+> code drift (docs vs. the code they document). Both are proposal-based, never auto-commit.
 
 6. First read `.cursor/skills/.staleness-pending` if it exists: the pre-commit hook records leaves
    there when a commit touched their `sources`. Treat those as stale up front, then also run
@@ -86,6 +105,7 @@ structural gate. Report what was taken-hard, merged, and any conflicts left for 
 ## Scripts
 
 - `_shared/scripts/diff-tooling.sh` (step 0, read-only 3-way classify vs. SSOT)
+- `_shared/scripts/diff-spec.sh` (step 0f, read-only spec delta for doc migration)
 - `_shared/scripts/check-dead-paths.sh`
 - `_shared/scripts/verify-docs-principles.sh`
 - `_shared/scripts/verify-patterns.sh` (step 5 pattern audit)
