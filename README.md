@@ -263,7 +263,8 @@ enforced by `verify-patterns.sh`.
 | **hub heading depth** | ≤ H2 | hubs are flat tables of contents. |
 | **leaf heading depth** | ≤ H3 | deeper nesting means the leaf is really several leaves. |
 | **skill frontmatter** | `name`, `description` | both Claude and Cursor select skills by these fields. |
-| **leaf frontmatter** | `audience`, `category`, `last_verified` | metadata makes leaves findable and lets staleness be reasoned about. |
+| **leaf frontmatter** | `audience`, `category`, `last_verified`, `load-when` | metadata makes leaves findable and lets staleness be reasoned about; `load-when` is the triage field an agent reads to decide loading (RKF). `type` is optional (OKF/RKF). |
+| **router** | `docs/_router.md` ≤ 80 lines, ≤ H2, frontmatter `type`+`description` | the task→file load logic (RKF §5); reserved file, not a leaf. |
 | **canonical skills** | exactly `docs-write`, `docs-verify`, `docs-defrag`, `docs-commit` | a self-consistency check: the skill set must not drift. |
 | **one concept per leaf** | *soft* | judged by `docs-defrag`, not a hard gate — a leaf covering several independent topics is a split candidate. |
 
@@ -291,7 +292,7 @@ docs-init/
     docs-verify/        the "checks" skill template
     docs-defrag/        the "removes/merges" skill template
     docs-commit/        the "commits" skill template
-    docs/               the docs/_index.md hub template
+    docs/               the docs/_index.md hub + docs/_router.md router templates
 ```
 
 For the terse lookup view, see [`AGENTS.md`](AGENTS.md). For the deeper rationale on layout, rollout,

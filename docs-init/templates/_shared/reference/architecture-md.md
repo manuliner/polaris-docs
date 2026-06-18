@@ -1,6 +1,6 @@
 # Architecture & codemap conventions
 
-Agent docs only. **Single file:** `docs/AGENTS_ARCHITECTURE.md` (diagram + tree + task router). Do **not** add root `ARCHITECTURE.md`.
+Agent docs only. **Single file:** `docs/AGENTS_ARCHITECTURE.md` (diagram + tree + module/directory map). Do **not** add root `ARCHITECTURE.md`. The task→file *load* logic lives in `docs/_router.md`, not here.
 
 ## `docs/AGENTS_ARCHITECTURE.md`
 

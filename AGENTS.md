@@ -20,8 +20,11 @@ docs-init/           # the orchestrator skill + installer
     docs-verify/     #   checks  — structural + MOC gate (--scope=staged|branch)
     docs-defrag/     #   removes/merges — consolidate, archive, drift audit
     docs-commit/     #   commits — commit staged code via the agent + catch doc drift
-    docs/            #   docs/_index.md hub template
+    docs/            #   docs/_index.md hub + docs/_router.md router templates
 ```
+
+Leaves carry triage frontmatter (`load-when` required, `type` optional/OKF-RKF). The router
+(`docs/_router.md`) maps a task to the files to load (RKF §5) — a strict superset of Google's OKF.
 
 ## Canonical skills (four + asset folder)
 

@@ -72,6 +72,12 @@ if [[ -f "$DOCS_TPL/_index.template.md" && ! -f "$REPO_ROOT/docs/_index.md" ]]; 
   cp -f "$DOCS_TPL/_index.template.md" "$REPO_ROOT/docs/_index.md"
   echo "scaffold-repo-skills: seeded $REPO_ROOT/docs/_index.md"
 fi
+# Seed docs/_router.md (task→file routing, RKF §5). Sibling of the hub: _index.md is navigation,
+# _router.md is the load logic.
+if [[ -f "$DOCS_TPL/_router.template.md" && ! -f "$REPO_ROOT/docs/_router.md" ]]; then
+  cp -f "$DOCS_TPL/_router.template.md" "$REPO_ROOT/docs/_router.md"
+  echo "scaffold-repo-skills: seeded $REPO_ROOT/docs/_router.md"
+fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 "$SCRIPT_DIR/link-claude-bridge.sh" "$REPO_ROOT"
