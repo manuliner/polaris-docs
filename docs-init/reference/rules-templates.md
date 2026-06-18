@@ -4,7 +4,7 @@
 
 ```yaml
 alwaysApply: true
-description: Prefer the three canonical doc skills only (docs-write, docs-verify, docs-defrag).
+description: Prefer the four canonical doc skills only (docs-write, docs-verify, docs-defrag, docs-commit).
 ```
 
 ```markdown
@@ -12,7 +12,7 @@ description: Prefer the three canonical doc skills only (docs-write, docs-verify
 
 - Use `.cursor/skills/_shared/scripts/` verification scripts before bulk doc edits.
 - Do not create `hybrid`, `docs-update`, `docs-concepts`, or the legacy
-  `docs-shared`/`docs-commit`/`docs-pr-check`/`docs-writer` skills.
+  `docs-shared`/`docs-pr-check`/`docs-writer` skills.
 ```
 
 ## Repository-specific rule

@@ -13,7 +13,7 @@ docs/
   DEPLOYMENT.md        # optional ops runbook
   adr/                 # decision records
 .cursor/
-  skills/              # three skills (docs-write/docs-verify/docs-defrag) + _shared asset folder
+  skills/              # four skills (docs-write/docs-verify/docs-defrag/docs-commit) + _shared asset folder
   agent-profile.json
   rules/               # optional *.mdc
 web/**/README.md       # optional one-liner per folder; link up to docs/AGENTS_*

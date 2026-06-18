@@ -1,9 +1,9 @@
 # polaris-docs
 
 **The single source of truth (SSOT) for our documentation tooling.** Like the Pole Star, this repo is
-the one fixed point that every other repo aligns to: it holds the doc-orchestration skill and the three
-canonical doc skills that Claude Code and Cursor use to write, check, and clean up documentation across
-projects.
+the one fixed point that every other repo aligns to: it holds the doc-orchestration skill and the four
+canonical doc skills that Claude Code and Cursor use to write, check, commit, and clean up documentation
+across projects.
 
 This README explains *why* the system is built the way it is. If you want the terse lookup reference
 (skill matrix, install one-liner), read [`AGENTS.md`](AGENTS.md) — that file is the agent-facing entry
@@ -18,13 +18,14 @@ Three moving parts:
 - **`docs-init`** — the orchestrator skill. It is repo-independent: it knows how to scaffold a repo,
   detect a workspace harness, and route to the right doc skill. It lives here and is symlinked onto your
   machine.
-- **Three canonical skills** — `docs-write` (adds), `docs-verify` (checks), `docs-defrag`
-  (removes/merges). One verb each, no overlap. These get *vendored* (copied) into each project repo.
+- **Four canonical skills** — `docs-write` (adds), `docs-verify` (checks), `docs-defrag`
+  (removes/merges), `docs-commit` (commits staged code via the agent + catches doc-to-code drift). One
+  verb each, no overlap. These get *vendored* (copied) into each project repo.
 - **`_shared`** — an asset folder, not a selectable skill. It holds the shared scripts and reference
-  prose (including `patterns.yaml`) once, so the three skills don't each carry a copy.
+  prose (including `patterns.yaml`) once, so the four skills don't each carry a copy.
 
-The deliberate constraint: there are **exactly three skills plus one asset folder**, forever. No
-`hybrid`, no `docs-update`, no resurrected legacy names. A wider menu only makes a selecting LLM guess.
+The deliberate constraint: there are **exactly four skills plus one asset folder**. No `hybrid`, no
+`docs-update`, no resurrected legacy names. A wider menu only makes a selecting LLM guess.
 
 ---
 
@@ -42,7 +43,7 @@ impossible because there is no copy.
 
 ### Repo → a project repo: **vendoring with provenance**
 
-Project repos ("satellites") don't symlink the three skills. They get a **copy** under
+Project repos ("satellites") don't symlink the four skills. They get a **copy** under
 `<repo>/.cursor/skills/`, checked into the repo. This is the OpenTitan `vendor.py` pattern, and the copy
 is intentional:
 
@@ -61,22 +62,23 @@ Cursor reads the vendored copy directly. Claude reaches it through a per-repo br
                           │   polaris-docs   (SSOT · git repo · remote)   │
                           │                                               │
                           │   docs-init/        (orchestrator)            │
-                          │   templates/_shared + 3 skill templates       │
+                          │   templates/_shared + 4 skill templates       │
                           │   manifest.json · patterns · VERSION          │
                           └─────────────────────────────────────────────┘
                                  │                              │
-              SYMLINK (docs-init)│                              │ VENDOR = copy (3 skills + _shared)
+              SYMLINK (docs-init)│                              │ VENDOR = copy (4 skills + _shared)
               SSOT is the source │                              │ stamped with .tooling-version
                  ┌───────────────┴───────────────┐              │
                  ▼                                ▼              ▼
        ~/.claude/skills/docs-init      ~/.cursor/skills/docs-init     <satellite-repo>/.cursor/skills/
             (Claude, global)               (Cursor, global)            ├── docs-write/   docs-verify/
-                                                                       ├── docs-defrag/  _shared/
+                                                                       ├── docs-defrag/  docs-commit/
+                                                                       ├── _shared/
                                                                        └── .tooling-version  (← which
                                                                                   SSOT commit this came from)
 ```
 
-`docs-init` is *symlinked* (the repo stays the source, so divergence is impossible). The three skills are
+`docs-init` is *symlinked* (the repo stays the source, so divergence is impossible). The four skills are
 *copied* into each satellite repo — self-contained, locally tunable, and stamped with their provenance.
 
 Inside a satellite, that one vendored copy is the single source for both tools:
@@ -84,7 +86,7 @@ Inside a satellite, that one vendored copy is the single source for both tools:
 ```
    <satellite-repo>/
    └── .cursor/skills/                     ◀── vendored copy (checked into the repo)
-         ├── docs-write/  docs-verify/  docs-defrag/   _shared/
+         ├── docs-write/  docs-verify/  docs-defrag/  docs-commit/   _shared/
          └── .tooling-version
                  ▲                      ▲
                  │                      │
@@ -95,7 +97,7 @@ Inside a satellite, that one vendored copy is the single source for both tools:
 ```
 
 Cursor reads it directly; Claude reaches it through a per-repo bridge symlink. Only the
-repo-independent orchestrator `docs-init` is symlinked globally — the three skills never are.
+repo-independent orchestrator `docs-init` is symlinked globally — the four skills never are.
 
 ---
 
@@ -118,7 +120,7 @@ rules).
 docs-init/scripts/scaffold-repo-skills.sh <repo-root>
 ```
 
-This copies `_shared` plus the three skills into `<repo>/.cursor/skills/`, writes the `.tooling-version`
+This copies `_shared` plus the four skills into `<repo>/.cursor/skills/`, writes the `.tooling-version`
 provenance stamp, bridges the skills to Claude, and seeds a `docs/_index.md` hub if the repo doesn't
 have one yet.
 
@@ -181,11 +183,11 @@ The mechanism, run as **step 0** of every `docs-defrag`:
 
 ---
 
-## The three skills — when to use which
+## The four skills — when to use which
 
 An agent reads `CLAUDE.md` at session start; its `@AGENTS.md` pointer leads into the doc graph
 (`docs/_index.md` as the hub, which links to the leaves). Reading is passive. The graph only *changes*
-when one of the three skills is invoked.
+when one of the four skills is invoked.
 
 ```
    ┌─────────┐   reads at session start
@@ -205,11 +207,12 @@ when one of the three skills is invoked.
         │                     docs/AGENTS_*.md        docs/adr/*.md …
         │                       (leaves · the actual content)
         │                                       ▲
-        │   on invocation, the three skills act on the doc graph:
+        │   on invocation, the four skills act on the doc graph:
         │                                       │
         ├─ docs-write   ── adds ─────────▶ new leaf + link into hub
         ├─ docs-verify  ── checks ───────▶ gates structure / MOC (writes nothing)
-        └─ docs-defrag  ── removes/merges▶ consolidates, prunes, self-updates, fixes drift
+        ├─ docs-defrag  ── removes/merges▶ consolidates, prunes, self-updates, fixes drift
+        └─ docs-commit  ── commits ──────▶ commits staged code, proposes doc updates on drift
 ```
 
 | Skill | Verb | Use it when |
@@ -217,11 +220,13 @@ when one of the three skills is invoked.
 | **`docs-write`** | adds | you're creating a new leaf, ADR, or runbook. It links the leaf into the hub and never deletes or gates. |
 | **`docs-verify`** | checks | you're about to commit or merge doc changes. It runs the structural + MOC gates and writes nothing. |
 | **`docs-defrag`** | removes / merges | you're consolidating, archiving, or pruning docs — and it also self-updates the tooling (step 0) and runs the drift check. |
+| **`docs-commit`** | commits | you ask the agent to commit. It checks the staged code against doc `sources`, proposes a `docs-write` update on drift (preview, your call), then commits. It proposes, never gates. |
 
 Typical sequences:
 
 - **New documentation:** `docs-write` → `docs-verify`.
 - **Before a commit:** `docs-verify --scope=staged` (the staged files).
+- **Committing through the agent:** `docs-commit` — catches doc drift at commit time and proposes the fix.
 - **Before a merge / on a PR:** `docs-verify --scope=branch` (everything the branch touched).
 - **Periodic cleanup:** `docs-defrag` — pulls any tooling update, prunes/merges leaves, audits patterns,
   and flags docs that have drifted from the code.
@@ -233,10 +238,13 @@ Typical sequences:
 staleness check flags any leaf whose sources have newer commits, then drafts a **patch proposal** (never
 an auto-commit) via `docs-write` for you to review. Accept it, re-verify, re-stamp — loop closed.
 
-The loop also has a **commit-time trigger**: scaffolding installs a pre-commit hook into the satellite
-repo that runs the staleness check against the *staged* changes. If a commit touches code a leaf
-documents, the hook **warns** (it never blocks the commit) and records the stale leaves in
-`.cursor/skills/.staleness-pending`. The next `docs-defrag` reads that marker and proposes the update.
+The loop also has a **commit-time trigger**, on two layers. When you commit *through the agent*,
+`docs-commit` runs the staged staleness check, reads the code diff, and proposes the doc update *before*
+the commit — the live, full-fidelity path, because the agent can call an LLM. For a plain `git commit`
+in the terminal, scaffolding installs a pre-commit hook that runs the same staged check; if a commit
+touches code a leaf documents, the hook **warns** (it never blocks) and records the stale leaves in
+`.cursor/skills/.staleness-pending` for the next `docs-defrag` to propose the update. (A git hook can't
+call an LLM, so it can only warn and hand off — hence the agent-driven `docs-commit` for the live case.)
 The hook is inserted marker-bounded into the native `.git/hooks/pre-commit`, so it coexists with husky
 or lefthook (see `_shared/reference/precommit-integration.md`).
 
@@ -256,7 +264,7 @@ enforced by `verify-patterns.sh`.
 | **leaf heading depth** | ≤ H3 | deeper nesting means the leaf is really several leaves. |
 | **skill frontmatter** | `name`, `description` | both Claude and Cursor select skills by these fields. |
 | **leaf frontmatter** | `audience`, `category`, `last_verified` | metadata makes leaves findable and lets staleness be reasoned about. |
-| **canonical skills** | exactly `docs-write`, `docs-verify`, `docs-defrag` | a self-consistency check: the skill set must not drift. |
+| **canonical skills** | exactly `docs-write`, `docs-verify`, `docs-defrag`, `docs-commit` | a self-consistency check: the skill set must not drift. |
 | **one concept per leaf** | *soft* | judged by `docs-defrag`, not a hard gate — a leaf covering several independent topics is a split candidate. |
 
 Everything except *one-concept-per-leaf* is a hard machine check (non-zero exit fails the gate). The
@@ -282,6 +290,7 @@ docs-init/
     docs-write/         the "adds" skill template
     docs-verify/        the "checks" skill template
     docs-defrag/        the "removes/merges" skill template
+    docs-commit/        the "commits" skill template
     docs/               the docs/_index.md hub template
 ```
 

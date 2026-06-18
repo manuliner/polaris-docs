@@ -83,10 +83,12 @@ PY
   )
 fi
 if [[ ${#CANON_SKILLS[@]} -eq 0 ]]; then
-  CANON_SKILLS=(docs-write docs-verify docs-defrag)   # fallback if registry missing
+  CANON_SKILLS=(docs-write docs-verify docs-defrag docs-commit)   # fallback if registry missing
 fi
 # Forbidden = the historic names that must never reappear as selectable skills.
-FORBIDDEN_NAMES=(hybrid docs-update docs-concepts docs-shared docs-commit docs-pr-check docs-writer docs-sync)
+# (docs-commit was reintroduced as a distinct commit-orchestrator verb — see its SKILL.md — so it is
+#  no longer forbidden; the old docs-commit was a verify-gate duplicate, this one is not.)
+FORBIDDEN_NAMES=(hybrid docs-update docs-concepts docs-shared docs-pr-check docs-writer docs-sync)
 
 echo "verify-docs: repo=$REPO_ROOT"
 

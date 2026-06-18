@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Scaffold the three canonical skills + the _shared asset folder under <repo>/.cursor/skills/.
+# Scaffold the four canonical skills + the _shared asset folder under <repo>/.cursor/skills/.
 # _shared holds the shared scripts/reference ONCE; skills reference it (no per-skill duplication).
 set -euo pipefail
 
@@ -16,7 +16,7 @@ mkdir -p "$DEST_BASE"
 rsync -a --delete "$SHARED_SRC/" "$DEST_BASE/_shared/"
 echo "scaffold-repo-skills: installed _shared asset folder"
 
-# 2. The three canonical skills — only their SKILL.md (scripts/reference live in _shared).
+# 2. The four canonical skills — only their SKILL.md (scripts/reference live in _shared).
 install_skill() {
   local name="$1"
   local template_dir="$2"
@@ -41,6 +41,7 @@ install_skill() {
 install_skill docs-write  "$DOCS_INIT_ROOT/templates/docs-write"
 install_skill docs-verify "$DOCS_INIT_ROOT/templates/docs-verify"
 install_skill docs-defrag "$DOCS_INIT_ROOT/templates/docs-defrag"
+install_skill docs-commit "$DOCS_INIT_ROOT/templates/docs-commit"
 
 # 2b. Provenance: record which SSOT version was vendored here. docs-defrag reads this on its
 #     next run to decide whether the SSOT has a newer HEAD (pull-update trigger, Phase D).
@@ -75,7 +76,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
 "$SCRIPT_DIR/link-claude-bridge.sh" "$REPO_ROOT"
 
-echo "scaffold-repo-skills: three skills + _shared installed under $DEST_BASE"
+echo "scaffold-repo-skills: four skills + _shared installed under $DEST_BASE"
 
 "$SCRIPT_DIR/integrate-harness.sh" "$REPO_ROOT"
 while IFS= read -r line; do

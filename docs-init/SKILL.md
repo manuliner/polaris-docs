@@ -1,11 +1,11 @@
 ---
 name: docs-init
-description: Bootstrap and maintain the canonical three-skill documentation system (docs-write/docs-verify/docs-defrag + _shared asset folder; L0 parent scan, phased rollout, Claude bridge).
+description: Bootstrap and maintain the canonical four-skill documentation system (docs-write/docs-verify/docs-defrag/docs-commit + _shared asset folder; L0 parent scan, phased rollout, Claude bridge).
 ---
 
 # docs-init
 
-Global installer and orchestrator for **three** canonical repository skills under `.cursor/skills/`: `docs-write` (adds), `docs-verify` (checks, `--scope=staged|branch`), and `docs-defrag` (removes/merges), plus the `_shared` asset folder (scripts + reference, not a selectable skill). No `hybrid`, `docs-update`, `docs-concepts`, or the legacy `docs-shared`/`docs-commit`/`docs-pr-check`/`docs-writer` layouts.
+Global installer and orchestrator for **four** canonical repository skills under `.cursor/skills/`: `docs-write` (adds), `docs-verify` (checks, `--scope=staged|branch`), `docs-defrag` (removes/merges), and `docs-commit` (commits staged code via the agent + catches doc-to-code drift), plus the `_shared` asset folder (scripts + reference, not a selectable skill). No `hybrid`, `docs-update`, `docs-concepts`, or the legacy `docs-shared`/`docs-pr-check`/`docs-writer` layouts.
 
 ## When to use
 
@@ -34,8 +34,8 @@ Does **not** create the harness — use **`workspace-init full`** first for mult
 | Phase | Goal |
 | ----- | ------ |
 | **1 — Install bundle** | Run `install.sh` to sync `~/.cursor/skills/docs-init` and mirror `~/.claude/skills/docs-init` when paths differ. |
-| **2 — Scaffold skills** | Run `scripts/scaffold-repo-skills.sh <repo-root>`; installs the `_shared` asset folder + three skills, runs `integrate-harness.sh`, reports workspace MODE. |
-| **3 — Bridge** | Run `scripts/link-claude-bridge.sh <repo-root>` (also invoked by scaffold); symlink each of the three skills into `~/.claude/skills/<name>`. |
+| **2 — Scaffold skills** | Run `scripts/scaffold-repo-skills.sh <repo-root>`; installs the `_shared` asset folder + four skills, runs `integrate-harness.sh`, reports workspace MODE. |
+| **3 — Bridge** | Run `scripts/link-claude-bridge.sh <repo-root>` (also invoked by scaffold); symlink each of the four skills into `~/.claude/skills/<name>`. |
 | **4 — Verify** | Execute `templates/_shared/scripts/verify-docs.sh` from the repo-skills copy (profile, L1/L3, skills, rules, forbidden paths, Claude symlinks). |
 | **5 — Auto sections** | Run `check-auto-sections.sh` where agent profiles define `autoSections`. |
 | **6 — Rollout** | Follow `reference/rollout-stages.md` and `token-efficiency.md` (MOC pattern) for staged adoption. |

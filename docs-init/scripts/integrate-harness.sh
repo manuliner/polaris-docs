@@ -58,8 +58,15 @@ $(sed "s|{{HARNESS_PATH}}|$HARNESS_REL|g" "$WORKSPACE_SECTION")
 | \`/docs-write\` | adds | New leaf under \`docs/\`, ADR, or refresh \`docs/AGENTS_*.md\` |
 | \`/docs-verify\` | checks | Pre-commit/merge gate, layout + SSOT (\`--scope=staged\\|branch\`) |
 | \`/docs-defrag\` | removes/merges | Consolidate, archive, dead paths, drift audit |
+| \`/docs-commit\` | commits | Commit staged code via the agent; catches doc-to-code drift and proposes the doc fix first |
 
 (\`_shared\` is an asset folder, not a selectable skill.)
+
+## Committing
+
+When asked to commit (any phrasing), use the \`/docs-commit\` skill rather than a bare \`git commit\`: it
+checks the staged change against doc-leaf \`sources\` and, if code a leaf documents changed, proposes a
+\`docs-write\` update before the commit. It never blocks — you can always commit code only.
 EOF
   echo "integrate-harness: created $CLAUDE with Workspace section"
   exit 0

@@ -12,7 +12,8 @@
     { "glob": ".tooling-version", "class": "managed", "why": "Provenance stamp; rewritten by docs-defrag after a successful update, never hand-edited." },
     { "glob": "docs-write/SKILL.md", "class": "local-overridable", "why": "Workflow wording a repo may tune; merge to keep local tuning + upstream improvements." },
     { "glob": "docs-verify/SKILL.md", "class": "local-overridable", "why": "See docs-write/SKILL.md." },
-    { "glob": "docs-defrag/SKILL.md", "class": "local-overridable", "why": "See docs-write/SKILL.md." }
+    { "glob": "docs-defrag/SKILL.md", "class": "local-overridable", "why": "See docs-write/SKILL.md." },
+    { "glob": "docs-commit/SKILL.md", "class": "local-overridable", "why": "See docs-write/SKILL.md." }
   ],
   "default": "managed"
 }

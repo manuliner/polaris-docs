@@ -94,5 +94,5 @@ structural gate. Report what was taken-hard, merged, and any conflicts left for 
 
 ## Canonical set
 
-One of **three** canonical skills (`docs-write`, `docs-verify`, `docs-defrag`) plus the `_shared`
-asset folder.
+One of **four** canonical skills (`docs-write`, `docs-verify`, `docs-defrag`, `docs-commit`) plus the
+`_shared` asset folder.

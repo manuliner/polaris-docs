@@ -41,7 +41,7 @@ for name in "${LEGACY[@]}"; do
   done
 done
 
-# 2b. Remove orphaned GLOBAL symlinks for the three current skills. These are bridged per-repo
+# 2b. Remove orphaned GLOBAL symlinks for the four current skills. These are bridged per-repo
 #     by scaffold-repo-skills.sh (pointing at a repo's vendored copy), never globally. A global
 #     one is a stale leftover (e.g. an old single-repo hub) and would shadow the correct per-repo link.
 for name in docs-write docs-verify docs-defrag; do

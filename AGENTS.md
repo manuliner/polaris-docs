@@ -3,7 +3,7 @@
 **The single source of truth (SSOT) for the documentation tooling.** Like the Pole Star, this repo
 is the fixed reference point that every satellite repo aligns to.
 
-It holds the doc-orchestration skill (`docs-init`) and the three canonical doc skills consumed by
+It holds the doc-orchestration skill (`docs-init`) and the four canonical doc skills consumed by
 Claude Code and Cursor. Satellite repos vendor copies of the skills and pull updates from here.
 
 ## What's inside
@@ -19,20 +19,22 @@ docs-init/           # the orchestrator skill + installer
     docs-write/      #   adds    — new leaves, ADRs, runbooks
     docs-verify/     #   checks  — structural + MOC gate (--scope=staged|branch)
     docs-defrag/     #   removes/merges — consolidate, archive, drift audit
+    docs-commit/     #   commits — commit staged code via the agent + catch doc drift
     docs/            #   docs/_index.md hub template
 ```
 
-## Canonical skills (three + asset folder)
+## Canonical skills (four + asset folder)
 
 | Skill | Verb | Use when |
 |-------|------|----------|
 | `docs-write` | adds | new leaf / ADR / codemap |
 | `docs-verify` | checks | pre-commit / pre-merge gate (`--scope=staged\|branch`) |
 | `docs-defrag` | removes/merges | consolidate, archive, dead paths, drift audit |
+| `docs-commit` | commits | commit staged code via the agent; catch doc-to-code drift, propose the fix |
 | `_shared` | (asset) | shared scripts + reference; not selectable |
 
 No `hybrid`, `docs-update`, `docs-concepts`, or the legacy
-`docs-shared`/`docs-commit`/`docs-pr-check`/`docs-writer` skills.
+`docs-shared`/`docs-pr-check`/`docs-writer` skills.
 
 ## Install (this machine)
 
@@ -43,7 +45,7 @@ docs-init/install.sh        # symlink docs-init into ~/.claude/skills + ~/.curso
 ## Distribution model
 
 - **This machine:** `docs-init` is symlinked into `~/.claude/skills` and `~/.cursor/skills` (SSOT = this repo).
-- **Satellite repos:** vendor the three skills + `_shared` via `scaffold-repo-skills.sh`; record the
+- **Satellite repos:** vendor the four skills + `_shared` via `scaffold-repo-skills.sh`; record the
   installed version in `.cursor/skills/.tooling-version`.
 - **Updates:** a satellite's `docs-defrag` checks this repo's HEAD/VERSION and context-merges changes,
   preserving local edits (see the tooling plan).

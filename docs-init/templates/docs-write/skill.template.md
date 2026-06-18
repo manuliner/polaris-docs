@@ -30,5 +30,5 @@ branch / PR comment) — **never an auto-commit**. After a human accepts it, re-
 
 ## Canonical set
 
-One of **three** canonical skills (`docs-write`, `docs-verify`, `docs-defrag`) plus the `_shared`
-asset folder.
+One of **four** canonical skills (`docs-write`, `docs-verify`, `docs-defrag`, `docs-commit`) plus the
+`_shared` asset folder.

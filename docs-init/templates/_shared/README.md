@@ -1,16 +1,17 @@
 # _shared — documentation asset folder (NOT a selectable skill)
 
-This folder holds the shared `scripts/` and `reference/` consumed by the three canonical doc
+This folder holds the shared `scripts/` and `reference/` consumed by the four canonical doc
 skills. It has **no `SKILL.md`** on purpose: it is a library, not a task. Agents never "choose"
-`_shared`; the three skills below reference its assets.
+`_shared`; the four skills below reference its assets.
 
-## Canonical skills (three)
+## Canonical skills (four)
 
 | Skill | Verb | Use when |
 |-------|------|----------|
 | `docs-write` | **adds** | new leaf, ADR, runbook → create + MOC-link |
 | `docs-verify` | **checks** | structural + principle gates (`--scope=staged\|branch`) |
 | `docs-defrag` | **removes/merges** | consolidate, archive, fix dead paths, drift audit |
+| `docs-commit` | **commits** | commit staged code via the agent; catch doc-to-code drift, propose the fix |
 
 ## Shared scripts (single source — no per-skill duplicates)
 
@@ -24,7 +25,7 @@ scripts/check-auto-sections.sh     # auto-section markers from profile
 ## Shared reference
 
 `reference/agent-doc-layout.md` (layout + SSOT rules), `reference/agent-context-files.md`,
-`reference/architecture-md.md`, `reference/doc-type-selector.md` (3-row routing),
+`reference/architecture-md.md`, `reference/doc-type-selector.md` (4-row routing),
 `reference/precommit-integration.md`.
 
 ## Agent doc layout (summary)

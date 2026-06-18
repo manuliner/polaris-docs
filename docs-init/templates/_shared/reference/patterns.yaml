@@ -63,7 +63,7 @@ rules:
     applies-to: ".cursor/skills/"
     check: enum
     target: skills-dirs
-    values: [docs-write, docs-verify, docs-defrag]
+    values: [docs-write, docs-verify, docs-defrag, docs-commit]
 
   - id: one-concept-per-leaf
     ref: agent-doc-layout.md

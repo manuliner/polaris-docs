@@ -32,5 +32,5 @@ The tool is identical in both modes; only the file set differs.
 
 ## Canonical set
 
-One of **three** canonical skills (`docs-write`, `docs-verify`, `docs-defrag`) plus the `_shared`
-asset folder. Do not add `hybrid` / `docs-update` / `docs-concepts`.
+One of **four** canonical skills (`docs-write`, `docs-verify`, `docs-defrag`, `docs-commit`) plus the
+`_shared` asset folder. Do not add `hybrid` / `docs-update` / `docs-concepts`.

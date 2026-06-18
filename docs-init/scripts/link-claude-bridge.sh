@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Symlink repo .cursor/skills/<canonical-three> → ~/.claude/skills/<name>
+# Symlink repo .cursor/skills/<canonical-four> → ~/.claude/skills/<name>
 # _shared is an asset folder (no SKILL.md), not bridged as a selectable skill.
 set -euo pipefail
 
@@ -12,6 +12,7 @@ CANON=(
   docs-write
   docs-verify
   docs-defrag
+  docs-commit
 )
 
 mkdir -p "$CLAUDE_SKILLS"
